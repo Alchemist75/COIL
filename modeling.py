@@ -29,9 +29,12 @@ class COIL(nn.Module):
 
         if model_args.token_norm_after:
             self.ln_tok = nn.LayerNorm(model_args.token_dim)
+        if model_args.token_sep_weight:
+            self.wt_tok = nn.Linear(768, 1)
+            self.normalize_tok = nn.functional.normalize
+            self.activ = torch.relu
         if model_args.cls_norm_after:
             self.ln_cls = nn.LayerNorm(model_args.cls_dim)
-
     @classmethod
     def from_pretrained(
             cls, model_args: ModelArguments, data_args: DataArguments, train_args: TrainingArguments,
@@ -64,7 +67,10 @@ class COIL(nn.Module):
             cls = self.ln_cls(cls)
         if self.model_args.token_norm_after:
             reps = self.ln_tok(reps)
-
+        if self.model_args.token_sep_weight:
+            wt = self.activ(self.wt_tok(model_out.last_hidden_state))
+            reps = self.normalize_tok(reps,p=2,dim=-1)
+            reps = reps * wt
         if self.model_args.token_rep_relu:
             reps = torch.relu(reps)
 
@@ -84,6 +90,13 @@ class COIL(nn.Module):
             qry_cls, doc_cls = self.ln_cls(qry_cls), self.ln_cls(doc_cls)
         if self.model_args.token_norm_after:
             qry_reps, doc_reps = self.ln_tok(qry_reps), self.ln_tok(doc_reps)
+        
+        if self.model_args.token_sep_weight:
+            qry_wt = self.activ(self.wt_tok(qry_out.last_hidden_state))
+            doc_wt = self.activ(self.wt_tok(doc_out.last_hidden_state))
+            qry_reps, doc_reps = self.normalize_tok(qry_reps,p=2,dim=-1), self.normalize_tok(doc_reps,p=2,dim=-1)
+            qry_reps = qry_reps * qry_wt
+            doc_reps = doc_reps * doc_wt
 
         if self.model_args.token_rep_relu:
             qry_reps = torch.relu(qry_reps)

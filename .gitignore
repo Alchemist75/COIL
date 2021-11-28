@@ -1,1 +1,9 @@
 .idea
+scripts/
+tmp/
+data
+models
+wandb
+runs
+__pycache__
+retriever/retriever_ext/

@@ -26,7 +26,6 @@ from tqdm import tqdm
 
 import numpy as np
 import torch
-
 from arguments import ModelArguments, DataArguments, COILTrainingArguments as TrainingArguments
 from marco_datasets import GroupedMarcoTrainDataset, MarcoPredDataset, MarcoEncodeDataset
 from modeling import COIL
