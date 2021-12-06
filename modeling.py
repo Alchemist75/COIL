@@ -93,10 +93,10 @@ class COIL(nn.Module):
         
         if self.model_args.token_sep_weight:
             qry_wt = self.activ(self.wt_tok(qry_out.last_hidden_state))
-            doc_wt = self.activ(self.wt_tok(doc_out.last_hidden_state))
+            #doc_wt = self.activ(self.wt_tok(doc_out.last_hidden_state))
             qry_reps, doc_reps = self.normalize_tok(qry_reps,p=2,dim=-1), self.normalize_tok(doc_reps,p=2,dim=-1)
             qry_reps = qry_reps * qry_wt
-            doc_reps = doc_reps * doc_wt
+            #doc_reps = doc_reps * doc_wt
 
         if self.model_args.token_rep_relu:
             qry_reps = torch.relu(qry_reps)

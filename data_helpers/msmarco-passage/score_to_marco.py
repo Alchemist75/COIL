@@ -31,9 +31,10 @@ qq = list(all_scores.keys())
 
 firstp_sfx = '.fp' if args.firstp else ''
 with open(args.score_file + f'{firstp_sfx}.marco', 'w') as f:
-    for qid in qq:
-        score_list = sorted(list(all_scores[qid].items()), key=lambda x: x[1], reverse=True)
-        for rank, (did, score) in enumerate(score_list):
-            f.write(f'{qid}\t{did}\t{rank+1}\n')
-            # f.write(f'{qid}\tQ0\t{did}\t{score}\t{args.run_id}\n')
+    with open(args.score_file + f'{firstp_sfx}.trec', 'w') as ftrec:
+        for qid in qq:
+            score_list = sorted(list(all_scores[qid].items()), key=lambda x: x[1], reverse=True)
+            for rank, (did, score) in enumerate(score_list):
+                f.write(f'{qid}\t{did}\t{rank+1}\n')
+                ftrec.write(f'{qid}\t0\t{did}\t{rank+1}\t{score}\t{args.run_id}\n')
 
