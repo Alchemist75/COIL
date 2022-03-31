@@ -1,1 +1,8 @@
 .idea
+results_beir/
+retriever/retriever_ext/
+data
+models
+scripts/
+wandb/
+__pycache__/

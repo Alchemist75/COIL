@@ -17,6 +17,13 @@ def dict_2_float(dd):
 
     return dd
 
+def load_rerank_f(fname):
+    f = open(fname)
+    ret = defaultdict(set)
+    for line in f:
+        line = line.strip().split()
+        ret[line[0]].add(line[1])
+    return ret 
 
 def build_full_tok_rep(dd):
     new_offsets = {}
@@ -50,7 +57,6 @@ def main():
     tok_id_2_reps = dict_2_float(tok_id_2_reps)
 
     print('Search index loaded', flush=True)
-
     query_tok_reps = torch.load(os.path.join(args.query, 'tok_reps.pt')).float()
     all_query_offsets = torch.load(os.path.join(args.query, 'offsets.pt'))
     query_cls_reps = torch.load(os.path.join(args.query, 'cls_reps.pt')).float()
@@ -66,7 +72,7 @@ def main():
 
     for batch_start in trange(0, len(all_query_offsets), batch_size, desc=shard_name):
         batch_q_reps = query_cls_reps[batch_start: batch_start + batch_size]
-        match_scores = torch.matmul(batch_q_reps, doc_cls_reps.transpose(0, 1))  # D * b
+        match_scores = torch.matmul(batch_q_reps, doc_cls_reps.transpose(0, 1))*0  # D * b
 
         batched_qtok_offsets = defaultdict(list)
         q_batch_offsets = defaultdict(list)
