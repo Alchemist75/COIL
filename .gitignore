@@ -4,5 +4,8 @@ retriever/retriever_ext/
 data
 models
 scripts/
-wandb/
-__pycache__/
+wandb
+tmp/
+runs
+__pycache__
+
